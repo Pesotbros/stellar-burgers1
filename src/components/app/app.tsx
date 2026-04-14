@@ -1,5 +1,4 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import '../../index.css';
 import styles from './app.module.css';
 
 import {
@@ -29,7 +28,6 @@ import {
   selectIsLoading,
   selectError
 } from '../../services/burgerIngredients/slice';
-
 import { getUser } from '../../services/userData/action';
 
 const App = () => {
@@ -40,13 +38,13 @@ const App = () => {
   const isLoading = useSelector(selectIsLoading);
   const errorMessage = useSelector(selectError);
 
-  // 🔑 ключевая штука для модалок
+  // Контекст для отображения модальных окон поверх основного интерфейса
   const background = location.state?.background;
 
-  const onCloseFn = () => {
-    navigate(-1);
-  };
+  // Функция для закрытия модального окна с возвратом на предыдущий экран
+  const onCloseFn = () => navigate(-1);
 
+  // Инициализация данных при монтировании компонента
   useEffect(() => {
     dispatch(getIngredients());
     dispatch(getUser());
@@ -56,18 +54,21 @@ const App = () => {
     <div className={styles.app}>
       <AppHeader />
 
-      {errorMessage && <div>{errorMessage}</div>}
+      {/* Отображение ошибок */}
+      {errorMessage && <div className={styles.error}>{errorMessage}</div>}
+
+      {/* Индикатор загрузки */}
       {isLoading && <Preloader />}
 
-      <>
-        {/* Основные маршруты */}
+      <section className={styles.mainContent}>
+        {/* Основной набор маршрутов приложения */}
         <Routes location={background || location}>
           <Route path='/' element={<ConstructorPage />} />
           <Route path='/feed' element={<Feed />} />
           <Route path='/feed/:number' element={<OrderInfo />} />
           <Route path='/ingredients/:id' element={<IngredientDetails />} />
 
-          {/* Только для НЕавторизованных */}
+          {/* Маршруты для неавторизованных пользователей */}
           <Route
             path='/login'
             element={<Protected onlyUnAuth component={<Login />} />}
@@ -85,7 +86,7 @@ const App = () => {
             element={<Protected onlyUnAuth component={<ResetPassword />} />}
           />
 
-          {/* Только для авторизованных */}
+          {/* Маршруты для авторизованных пользователей */}
           <Route
             path='/profile'
             element={<Protected component={<Profile />} />}
@@ -102,32 +103,34 @@ const App = () => {
           <Route path='*' element={<NotFound404 />} />
         </Routes>
 
-        {/* Модальные окна */}
+        {/* Отдельный блок для модальных окон */}
         {background && (
-          <Routes>
-            <Route
-              path='/feed/:number'
-              element={<FeedOrderModalRoute onClose={onCloseFn} />}
-            />
-            <Route
-              path='/ingredients/:id'
-              element={
-                <Modal title='Детали ингредиента' onClose={onCloseFn}>
-                  <IngredientDetails />
-                </Modal>
-              }
-            />
-            <Route
-              path='/profile/orders/:number'
-              element={
-                <Protected
-                  component={<FeedOrderModalRoute onClose={onCloseFn} />}
-                />
-              }
-            />
-          </Routes>
+          <div className={styles.modalOverlay}>
+            <Routes>
+              <Route
+                path='/feed/:number'
+                element={<FeedOrderModalRoute onClose={onCloseFn} />}
+              />
+              <Route
+                path='/ingredients/:id'
+                element={
+                  <Modal title='Детали ингредиента' onClose={onCloseFn}>
+                    <IngredientDetails />
+                  </Modal>
+                }
+              />
+              <Route
+                path='/profile/orders/:number'
+                element={
+                  <Protected
+                    component={<FeedOrderModalRoute onClose={onCloseFn} />}
+                  />
+                }
+              />
+            </Routes>
+          </div>
         )}
-      </>
+      </section>
     </div>
   );
 };
