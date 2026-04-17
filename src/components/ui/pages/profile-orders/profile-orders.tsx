@@ -5,13 +5,25 @@ import styles from './profile-orders.module.css';
 import { ProfileOrdersUIProps } from './type';
 import { ProfileMenu, OrdersList } from '@components';
 
-export const ProfileOrdersUI: FC<ProfileOrdersUIProps> = ({ orders }) => (
+import { Preloader } from '../../preloader';
+
+export const ProfileOrdersUI: FC<ProfileOrdersUIProps> = ({
+  orders,
+  error,
+  isLoading
+}) => (
   <main className={`${styles.main}`}>
     <div className={`mt-30 mr-15 ${styles.menu}`}>
       <ProfileMenu />
     </div>
-    <div className={`mt-10 ${styles.orders}`}>
-      <OrdersList orders={orders} />
-    </div>
+    {isLoading ? (
+      <Preloader />
+    ) : error ? (
+      <div>Ошибка: {error}</div>
+    ) : (
+      <div className={`mt-10 ${styles.orders}`}>
+        <OrdersList orders={orders} />
+      </div>
+    )}
   </main>
 );

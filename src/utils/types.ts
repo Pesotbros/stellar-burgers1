@@ -1,7 +1,7 @@
 export type TIngredient = {
   _id: string;
   name: string;
-  type: string;
+  type: TTabMode | string;
   proteins: number;
   fat: number;
   carbohydrates: number;
@@ -38,3 +38,5 @@ export type TUser = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export type TLocationState = { from?: Location };
