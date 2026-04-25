@@ -9,7 +9,7 @@ const config: StorybookConfig = {
     '@storybook/addon-onboarding',
     '@storybook/addon-interactions'
   ],
-  webpackFinal: async (config) => {
+  webpackFinal: async (config: { resolve: { alias: any; }; }) => {
     config.resolve
       ? (config.resolve.alias = {
           ...config.resolve.alias,
