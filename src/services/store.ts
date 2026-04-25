@@ -14,7 +14,7 @@ import { passwordRecoverySlice } from './passwordRecovery/slice';
 import { userOrdersSlice } from './userOrders/slice';
 import { orderByNumberSlice } from './orderInfo/slice';
 
-const rootReducer = combineSlices(
+export const rootReducer = combineSlices(
   ingredientsSlice,
   burgerConstructorSlice,
   createOrderSlice,
